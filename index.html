@@ -1,0 +1,217 @@
+<!--
+    Author: Margaritis Stathis
+
+    Περιγραφή:
+
+        Σελίδα που φιλοξενεί έναν υπολογιστή το νόμου της πυκνότητας!
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Functions Project</title>
+        <script src ="Density.js"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+
+    <body onload="onLoad()">
+    <div class="box">
+        <h1>Ο νόμος της πυκνότητας</h1>
+        <p class="rule"><b>Η πυκνότητα συνιστά φυσικό μέγεθος με το οποίο 
+         εκφράζεται η μάζα ενός υλικού ανά μονάδα όγκου. Συνήθως, συμβολίζεται με το ελληνικό γράμμα ρ 
+         ή με το λατινικό γράμμα d. <br> Μονάδα μέτρησης της πυκνότητας στο Διεθνές Σύστημα Μονάδων είναι 
+         το kg/m^3 (χιλιόγραμμο ανά κυβικό μέτρο).
+            </b></p>
+        <br>
+            <img src="Density Law.jpg" alt="Νόμος Πυκνότητας" style ="width:20%">
+            <img src="Density Calculation.jpg" alt="Υπολογισμός της Πυκνότητας" style="width:25%;">
+        
+        <h3>Υπολογιστής Νόμου της Πυκνότητας</h3>
+        <p style="width:70%; text-align:left;">Μπορείτε να υπολογίσετε οποιαδήποτε παράμετρο <b style="color:rgb(255, 174, 0)">D</b>, <b style="color:rgb(255, 174, 0)">m</b> ή <b style="color:rgb(255, 174, 0)">V</b> αν γνωρίζετε
+        δύο εκ των τριών παραμέτρων.
+        Χρησιμοποιήστε το αναδυόμενο μενού επιλογών <b style="color:blue">"Υπολογισμός:"</b> για να επιλέξετε την άγνωστη μεταβλητή. Τα πεδία με <b style="color:rgb(68, 128, 0)">πράσινο</b> χρώμα
+        είναι τα πεδία των γνωστών μεταβλητών και <b><u>ενεργοποιούνται ανάλογα με την επιλογή της άγνωστης μεταβλητής.</b></u>
+        </p>
+        <div id ="bord" class="container">
+
+            <div class = "row">
+                <div class="column"><p><b style="color:black"><u>Τιμή της πυκνότητας</u></b><br>D(kg/m^3)</p></div>
+                <div class="column"><p><b style="color:black"><u>Τιμή της μάζας</u></b><br>m(kg)</p></div>
+                <div class="column"><p><b style="color:black"><u>Τιμή του Όγκου </u></b><br> V (m^3)</p></div>
+            </div>
+
+            <div class = "row">
+                <div class="column"><input id="density"></div>
+                <div class="column"><input id="mass"></div>
+                <div class="column"> <input id ="volume"></div>
+            </div>
+            
+            <div class = "row">
+                <div class="column"><label for="calcSelection"><b style="color:blue"> Υπολογισμός:</b></label></div>
+                <div class="column"></div>
+                <div class="column"></div>
+            </div>
+
+            <div class = "row">
+                <div class="column"> 
+                    <select name="Calculate" id="calcSelection" onchange="onResultChange()">
+                    <option value="D"">Πυκνότητας</option>
+                    <option value="m">Μάζας</option>
+                    <option value="V">Όγκου</option>
+                    </select></div>
+                <div class="column"> <p id="result" class="result"></p></div>
+                <div class="column"><button id="calcButton" onclick="oncalcButtonClick()">Υπολογισμός</button></div>    
+        </div>
+    </div>  
+    <!--
+        Πρόγραμμα υπολογισμού του νόμου της Πυκνότητας σύμφωνα με τις παραμέτρους που είναι γνωστές οι τιμές τους!
+    -->
+    <script>
+       
+       // δήλωσε μεταβλητές αναφοράς για κάθε πεδίο εισόδου
+       let inputD = document.getElementById("density");
+       let inputm = document.getElementById("mass");
+       let inputV = document.getElementById("volume");
+       // δήλωσε μία μεταβλητή αναφοράς για το στοιχείο αναδυόμενης λίστας επιλογής υπολογισμού
+       let calc = document.getElementById("calcSelection");
+       // δήλωσε μία μεταβλητή αναφοράς για το στοιχείο εμφάνισης αποτελέσματος 
+       let result = document.getElementById("result");
+
+        // συνάρτηση που θα εκτελείται όταν φορτώνουμε τη σελίδα
+       function onLoad() {
+        // κατά τη φόρτωση της σελίδας
+        calc.value = "D";               // επέλεξε ως αρχική επιλογή υπολογισμού την Πυκνότητα
+        inputD.disabled = true;         // απενεργοποίησε το στοιχείο εισόδου τιμής της πυκνότητας
+        inputD.value = "";              // καθάρισε όλα τα πεδία εισόδου
+        inputm.value = "";
+        inputV.value = "";
+        // κάνε μεταβολή των χρωμάτων 
+        inputD.style.backgroundColor = "transparent";
+        inputm.style.backgroundColor = "greenyellow";
+        inputV.style.backgroundColor = "greenyellow";
+       }
+       
+        // συνάρτηση που θα εκτελείται με την αλλαγή της τιμής του στοιχείου select
+        function onResultChange() {            
+                calculationSelector(calc.value);           
+        }
+
+        // συνάρτηση που θα εκτελείται όταν πατηθεί το πλήκτρο υπολογισμού
+        function oncalcButtonClick() {
+            // ανάλογα με την επιλογή υπολογισμού
+            switch(calc.value)
+            {
+                case "D": // υπολογισμός της πυκνότητας από τη μάζα και τον όγκο
+
+                // Προτού προχωρήσεις σε υπολογισμούς κάνε έλεγχο αν ο παρανομαστής του κλάσματος είναι διαφορετικός
+                // του 0. Στην περίπτωση αυτή είναι η τιμή του όγκου V αφού εκτελούμε την πράξη  D = m/V. 
+                if (checkDenominator(inputV.value))
+                {
+                    // εμφάνισε το αποτέλεσμα στο πεδίο result 
+                    result.innerHTML = Density_D(inputm.value,inputV.value,true);
+                    // εμφάνισε το ίδιο αποτέλεσμα και στο πεδίο εισόδου της πυκνότητας χωρίς τις μονάδες μέτρησης
+                    inputD.value = Density_D(inputm.value,inputV.value,false);;
+                }
+                else // σε περίπτωση που ο παρανομαστής είναι 0 ή κάποια απροσδιόριστη τιμή 
+                {
+                    // πρέπει να εμφανίσουμε ένα μήνυμα 
+                    result.innerHTML = "Η τιμή της πυκνότητας D δεν έχει σωστή μορφή";
+                }
+                    break;
+                case "m": // υπολογισμός της μάζας από πυκνότητα και όγκο
+
+                        // εμφάνισε το αποτέλεσμα στο πεδίο result 
+                        result.innerHTML = Density_m(inputD.value,inputV.value,true);
+                        // εμφάνισε το ίδιο αποτέλεσμα και στο πεδίο εισόδου της μάζας χωρίς τις μονάδες μέτρησης
+                        inputm.value = Density_m(inputD.value,inputV.value,false);            
+                    break;
+                case "V": // υπολογισμός του όγκου από την πυκνότητα και τη μάζα
+
+                // προτού προχωρήσεις σε υπολογισμούς κάνε έλεγχο αν ο παρανομαστής του κλάσματος είναι διαφορετικός
+                // του 0. Στην περίπτωση αυτή είναι η τιμή της πυκνότητας D αφού εκτελούμε την πράξη  V = m/D. 
+                if (checkDenominator(inputD.value))
+                {
+                    // εμφάνισε το αποτέλεσμα στο πεδίο result 
+                    result.innerHTML = Density_V(inputD.value,inputm.value,true);
+                    // εμφάνισε το ίδιο αποτέλεσμα και στο πεδίο εισόδου του όγκου χωρίς τις μονάδες μέτρησης
+                    inputV.value = Density_V(inputD.value,inputm.value,false);;
+                }
+                else // σε περίπτωση που ο παρανομαστής είναι 0 ή κάποια απροσδιόριστη τιμή 
+                {
+                    // πρέπει να εμφανίσουμε ένα μήνυμα 
+                    result.innerHTML = "Η τιμή του όγκου V δεν έχει σωστή μορφή";
+                }
+                break;
+            }
+        }
+
+        // μία συνάρτηση η οποία επιστρέφει true αν η παράμετρος value είναι αριθμός διαφορετικός του 0
+        // θα χρησιμοποιηθεί ώστε να ελέγχει αν ο παρανομαστής ενός κλάσματος δεν είναι 0 ώστε να μην 
+        // δημιουργούνται προβλήματα κατά τις πράξεις με διαιρέσεις.
+        function checkDenominator(value) {
+            // μεταβλητή η οποία θα γίνει true μόνο αν ο παρανομαστής είναι αριθμός και είναι διαφορετικός του 0
+            let pass = false;
+
+            // κάνε μετατροπή της τιμής value σε αριθμό τύπου float
+            let f = parseFloat(value);
+            // πρώτα κάνε έλεγχο αν η τιμή δεν είναι άκυρη
+            if (!Number.isNaN(f))
+            {
+                // αν περάσεις το πρώτο check κάνε έλεγχο αν δεν είναι 0
+                if (value != 0)
+                 // θέσε πως περάσαμε τα check άρα είναι ασφαλές να χρησιμοποιήσουμε τον αριθμό
+                 pass = true;                
+            }
+            return pass;
+        }
+        // Συνάρτηση με τη μορφή διαδικασίας η οποία δέχεται μία παράμετρο value
+        // και σύμφωνα με την τιμή αυτής της παραμέτρου απενεργοποιεί το κουτί εισόδου
+        // που αντιστοιχεί στον υπολογισμό αυτής της ποσότητας. Οι επιτρεπτές τιμές είναι
+        // "D" - για υπολογισμό της πυκνότητας
+        // "m" - για υπολογισμό της μάζας
+        // "V" - για υπολογισμό του όγκου
+        // Η συνάρτηση αυτή έχει σχεδιαστεί να λειτουργεί με την συνάρτηση εξυπηρέτησης του event onChange
+        // για το στοιχείο <select> που έχουμε τοποθετήσει στη σελίδα μας ωστε να επιλέγουμε την παράμετρο υπολογισμού
+        function calculationSelector(value) {
+            // ανάλογα με την τιμή της παραμέτρου value
+            // απενεργοποίησε το κουτί εισόδου για το οποίο ο υπολογισμός θέλουμε να γίνει
+            // και ενεργοποίησε τα κουτιά εισόδου των τιμών που θα συμμετέχουν στους υπολογισμούς ως γνωστές μεταβλητές
+            // άλλαξε επίσης και τα χρώματα των πεδίων που είναι ενεργά καθώς και του πεδίου που είναι ανενεργό
+            switch (value) 
+            {
+                case "D":
+                    inputD.disabled = true;
+                    inputm.disabled = false;
+                    inputV.disabled = false;
+                    inputD.style.backgroundColor = "transparent";
+                    inputm.style.backgroundColor = "greenyellow";
+                    inputV.style.backgroundColor = "greenyellow";
+                    break;
+                case "m":
+                    inputD.disabled = false;
+                    inputm.disabled = true;
+                    inputV.disabled = false;
+                    inputD.style.backgroundColor = "greenyellow";
+                    inputm.style.backgroundColor = "transparent";
+                    inputV.style.backgroundColor = "greenyellow";
+                    break;
+                case "V":
+                    inputD.disabled = false;
+                    inputm.disabled = false;
+                    inputV.disabled = true;
+                    inputD.style.backgroundColor = "greenyellow";
+                    inputm.style.backgroundColor = "greenyellow";
+                    inputV.style.backgroundColor = "transparent";
+                    break;
+                default:               
+                    inputD.disabled = true;
+                    inputm.disabled = false;
+                    inputV.disabled = false;
+                    inputD.style.backgroundColor = "transparent";
+                    inputm.style.backgroundColor = "greenyellow";
+                    inputV.style.backgroundColor = "greenyellow";
+                    break;
+            }
+        }
+    </script>
+    </body>
+</html>
